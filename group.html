@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREWPALS</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Link sa iyong external CSS file kung mayroon -->
+    <link rel="stylesheet" href="groupals.css">
+
+    <style>
+        /* ==================== NAUTICAL / OCEAN EXTRA EFFECTS ==================== */
+        :root {
+            --accent-cyan: #38bdf8;
+            --accent-glow: #0ea5e9;
+            --glass-border: rgba(56, 189, 248, 0.3);
+        }
+
+        /* Fixed background para hindi maputol o ma-repeat */
+        body {
+            background-repeat: no-repeat !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-attachment: fixed !important;
+        }
+
+        /* 2x2 Grid Layout sa Menu Section (Dalawa sa Taas, Dalawa sa Baba) */
+        .menu-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 24px !important;
+        }
+
+        @media (max-width: 768px) {
+            .menu-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        /* 1. Sea Mist / Floating Fog Layer */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, transparent 60%);
+            animation: driftFog 25s linear infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes driftFog {
+            0% { transform: translate(-10%, -10%); }
+            100% { transform: translate(10%, 10%); }
+        }
+
+        /* 2. Rotating Compass Rose Ring Effect */
+        .glow-bg::after {
+            content: '';
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 650px; height: 650px;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(56, 189, 248, 0.18);
+            border-radius: 50%;
+            box-shadow: 0 0 50px rgba(14, 165, 233, 0.12), inset 0 0 30px rgba(56, 189, 248, 0.08);
+            animation: spinCompass 60s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes spinCompass {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 3. Wave Sway Motion Effect for Main Container */
+        .float-box {
+            animation: oceanSway 7s ease-in-out infinite alternate;
+        }
+
+        @keyframes oceanSway {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(0.2deg); }
+            100% { transform: translateY(5px) rotate(-0.2deg); }
+        }
+
+        /* 4. Enhanced Glass Card Hover Effects & Cyan Ocean Glow */
+        .card-glass {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        .menu-card:hover .card-glass {
+            border-color: var(--accent-cyan) !important;
+            box-shadow: 0 12px 35px rgba(14, 165, 233, 0.35), inset 0 0 20px rgba(56, 189, 248, 0.2) !important;
+            transform: translateY(-8px) scale(1.02) !important;
+        }
+
+        /* Light Shimmer Effect over Cards */
+        .card-glass::after {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            transform: rotate(30deg);
+            transition: 0.8s;
+            pointer-events: none;
+        }
+
+        .menu-card:hover .card-glass::after {
+            left: 100%;
+        }
+
+        /* Dynamic Canvas Particle Layer */
+        #particle-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .main-wrapper, .navbar, footer {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ==================== EDUCATIONAL ROOM MODAL ENHANCED STYLING ==================== */
+        .edu-modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(4, 12, 24, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            padding: 1rem;
+            animation: fadeInModal 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeInModal {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .edu-modal-content {
+            position: relative;
+            width: 100%;
+            max-width: 580px;
+            background: rgba(10, 25, 47, 0.92) !important;
+            border: 1px solid rgba(56, 189, 248, 0.4) !important;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 
+                        0 0 30px rgba(14, 165, 233, 0.3),
+                        inset 0 0 20px rgba(56, 189, 248, 0.15) !important;
+            border-radius: 24px !important;
+            padding: 2.2rem !important;
+            animation: modalFloat 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes modalFloat {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        /* Close X Button */
+        .edu-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .edu-close-btn:hover {
+            background: #0ea5e9;
+            color: #fff;
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 0 15px #0ea5e9;
+        }
+
+        /* Styled Educational Details Cards */
+        .edu-details-box {
+            margin-top: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .edu-card-item {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-left: 4px solid #38bdf8;
+            padding: 14px 18px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .edu-card-item:hover {
+            background: rgba(14, 165, 233, 0.12);
+            border-color: #38bdf8;
+            transform: translateX(6px);
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.2);
+        }
+
+        .edu-card-level {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            color: #38bdf8;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .edu-card-school {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        /* Primary Action Modal Button */
+        .btn-modal-close {
+            background: linear-gradient(135deg, #0ea5e9, #6366f1);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-modal-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(14, 165, 233, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Dynamic Canvas Particle Background -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Animated Glow Orbs Background -->
+    <div class="glow-bg">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <a href="#menu" class="logo glow-text-hover" onclick="switchSection('menu'); return false;">
+            <i class="fa-solid fa-laptop-code logo-icon pulse-icon"></i>
+            <span>CREW<b class="shimmer-text">PALS</b></span>
+        </a>
+        
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#menu" class="nav-item active" data-target="menu" onclick="switchSection('menu'); return false;"><i class="fa-solid fa-grid-2"></i> Menu</a></li>
+                <li><a href="#resume" class="nav-item" data-target="resume" onclick="switchSection('resume'); return false;"><i class="fa-solid fa-file-user"></i> Resume</a></li>
+                <li><a href="#skills" class="nav-item" data-target="skills" onclick="switchSection('skills'); return false;"><i class="fa-solid fa-wand-magic-sparkles"></i> Team Skills</a></li>
+                <li><a href="#more" class="nav-item" data-target="more" onclick="switchSection('more'); return false;"><i class="fa-solid fa-layer-group"></i> More</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-wrapper">
+
+        <!-- ==================== 1. MENU SECTION ==================== -->
+        <section id="menu" class="section active-section">
+            <div class="glass-box menu-container float-box">
+                <div class="section-badge float-badge"><i class="fa-solid fa-users spin-icon"></i> Meet Our Team</div>
+                <h1 class="main-title gradient-text">THE CREW MATES</h1>
+                <p class="section-subtitle">Click on any profile card below to view full personal details, resume, skills, and projects.</p>
+
+                <div class="menu-grid">
+                    <!-- Member 1 Card -->
+                    <div class="menu-card tilt-card" onclick="switchMember('jennilyn')">
+                        <div class="card-glass">
+                            <div class="img-wrapper">
+                                <img src="JEN.jpg" alt="Jennilyn Soriano A.">
+                                <div class="badge-role pulse-badge">Designer</div>
+                            </div>
+                            <div class="card-info">
+                                <h3>Jennilyn Soriano A.</h3>
+                                <p class="card-subtext"><i class="fa-solid fa-location-dot bounce-icon"></i> Agoo | 18 Yrs</p>
+                                <span class="view-btn">View Profile <i class="fa-solid fa-arrow-right slide-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member 2 Card -->
+                    <div class="menu-card tilt-card" onclick="switchMember('jake')">
+                        <div class="card-glass">
+                            <div class="img-wrapper">
+                                <img src="JAKE.png" alt="Jake Aglabtin M.">
+                                <div class="badge-role pulse-badge">Frontend</div>
+                            </div>
+                            <div class="card-info">
+                                <h3>Jake Aglabtin M.</h3>
+                                <p class="card-subtext"><i class="fa-solid fa-location-dot bounce-icon"></i> Sison | 18 Yrs</p>
+                                <span class="view-btn">View Profile <i class="fa-solid fa-arrow-right slide-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member 3 Card -->
+                    <div class="menu-card tilt-card" onclick="switchMember('justine')">
+                        <div class="card-glass">
+                            <div class="img-wrapper">
+                                <img src="JUST.png" alt="Justine Ignacio P.">
+                                <div class="badge-role pulse-badge">Backend</div>
+                            </div>
+                            <div class="card-info">
+                                <h3>Justine Ignacio P.</h3>
+                                <p class="card-subtext"><i class="fa-solid fa-location-dot bounce-icon"></i> Rosales | 18 Yrs</p>
+                                <span class="view-btn">View Profile <i class="fa-solid fa-arrow-right slide-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Member 4 Card -->
+                    <div class="menu-card tilt-card" onclick="switchMember('jaym')">
+                        <div class="card-glass">
+                            <div class="img-wrapper">
+                                <img src="JM.png" alt="Jaym Lumibao T.">
+                                <div class="badge-role pulse-badge">Creative Lead</div>
+                            </div>
+                            <div class="card-info">
+                                <h3>Jaym Lumibao T.</h3>
+                                <p class="card-subtext"><i class="fa-solid fa-location-dot bounce-icon"></i> Rosales | 18 Yrs</p>
+                                <span class="view-btn">View Profile <i class="fa-solid fa-arrow-right slide-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 2. RESUME / PROFILE SECTION ==================== -->
+        <section id="resume" class="section">
+            <div class="glass-box float-box">
+                
+                <!-- Member Switcher Tabs -->
+                <div class="member-tabs">
+                    <button class="tab-btn active-tab glow-button" onclick="switchMember('jennilyn')">Jennilyn</button>
+                    <button class="tab-btn glow-button" onclick="switchMember('jake')">Jake</button>
+                    <button class="tab-btn glow-button" onclick="switchMember('justine')">Justine</button>
+                    <button class="tab-btn glow-button" onclick="switchMember('jaym')">Jaym</button>
+                </div>
+
+                <!-- Member 1: Jennilyn -->
+                <div id="jennilyn" class="profile-card-content active-profile profile-hero">
+                    <div class="profile-avatar-container">
+                        <div class="avatar-ring double-ring"></div>
+                        <img src="JEN.jpg" alt="Jennilyn Soriano A." class="profile-img-zoom">
+                    </div>
+                    <div class="profile-details">
+                        <div class="active-badge glow-badge">Web Developer & UI/UX Designer</div>
+                        <h1 class="gradient-text">Jennilyn Soriano A.</h1>
+                        <p class="profile-bio">A passionate Web Developer & Designer building modern, accessible, and highly responsive web applications.</p>
+
+                        <div class="personal-data-grid">
+                            <div class="data-card hover-glow"><i class="fa-solid fa-calendar-day pulse-icon"></i><div><span class="data-label">Date of Birth</span><strong class="data-value">September 2, 2008</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-location-dot pulse-icon"></i><div><span class="data-label">Place of Birth</span><strong class="data-value">Agoo</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-hourglass-half pulse-icon"></i><div><span class="data-label">Age</span><strong class="data-value">18 Years Old</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-venus-mars pulse-icon"></i><div><span class="data-label">Sex</span><strong class="data-value">Female</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-church pulse-icon"></i><div><span class="data-label">Religion</span><strong class="data-value">Roman Catholic</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-heart pulse-icon"></i><div><span class="data-label">Marital Status</span><strong class="data-value">Single</strong></div></div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-secondary" onclick="switchSection('menu')"><i class="fa-solid fa-chevron-left"></i> Back to Menu</button>
+                            <button class="btn btn-primary" onclick="openEducationModal('Jennilyn Soriano A.', 'Don Jose B. Bernal Elementary School', 'Rosario Integrated School', 'University Of Eastearn Pangasinan')">
+                                 <i class="fa-solid fa-graduation-cap"></i> Background Education
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member 2: Jake -->
+                <div id="jake" class="profile-card-content profile-hero">
+                    <div class="profile-avatar-container">
+                        <div class="avatar-ring double-ring"></div>
+                        <img src="JAKE.png" alt="Jake Aglabtin M." class="profile-img-zoom">
+                    </div>
+                    <div class="profile-details">
+                        <div class="active-badge glow-badge">Front-End Developer</div>
+                        <h1 class="gradient-text">Jake Aglabtin M.</h1>
+                        <p class="profile-bio">Specializing in front-end development, UI design, and responsive web layouts with clean, efficient code.</p>
+
+                        <div class="personal-data-grid">
+                            <div class="data-card hover-glow"><i class="fa-solid fa-calendar-day pulse-icon"></i><div><span class="data-label">Date of Birth</span><strong class="data-value">April 19, 2008</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-location-dot pulse-icon"></i><div><span class="data-label">Place of Birth</span><strong class="data-value">Sison</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-hourglass-half pulse-icon"></i><div><span class="data-label">Age</span><strong class="data-value">18 Years Old</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-venus-mars pulse-icon"></i><div><span class="data-label">Sex</span><strong class="data-value">Male</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-church pulse-icon"></i><div><span class="data-label">Religion</span><strong class="data-value">Roman Catholic</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-heart pulse-icon"></i><div><span class="data-label">Marital Status</span><strong class="data-value">Single</strong></div></div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button class="btn btn-secondary" onclick="switchSection('menu')"><i class="fa-solid fa-chevron-left"></i> Back to Menu</button>
+                            <button class="btn btn-primary" onclick="openEducationModal('Jake Aglabtin M.', 'Don Jose B. Bernal Elementary School', 'Don Valentine Torres Integrated School', 'University Of Eastern Pangasinan')">
+                                <i class="fa-solid fa-graduation-cap"></i> Background Education
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member 3: Justine -->
+                <div id="justine" class="profile-card-content profile-hero">
+                    <div class="profile-avatar-container">
+                        <div class="avatar-ring double-ring"></div>
+                        <img src="JUST.png" alt="Justine Ignacio P." class="profile-img-zoom">
+                    </div>
+                    <div class="profile-details">
+                        <div class="active-badge glow-badge">Back-End Developer</div>
+                        <h1 class="gradient-text">Justine Ignacio P.</h1>
+                        <p class="profile-bio">Focused on database management, back-end solutions, and robust web application logic.</p>
+
+                        <div class="personal-data-grid">
+                            <div class="data-card hover-glow"><i class="fa-solid fa-calendar-day pulse-icon"></i><div><span class="data-label">Date of Birth</span><strong class="data-value">October 27, 2007</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-location-dot pulse-icon"></i><div><span class="data-label">Place of Birth</span><strong class="data-value">Rosales</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-hourglass-half pulse-icon"></i><div><span class="data-label">Age</span><strong class="data-value">18 Years Old</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-venus-mars pulse-icon"></i><div><span class="data-label">Sex</span><strong class="data-value">Male</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-church pulse-icon"></i><div><span class="data-label">Religion</span><strong class="data-value">Born Again Christian</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-heart pulse-icon"></i><div><span class="data-label">Marital Status</span><strong class="data-value">Single</strong></div></div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-secondary" onclick="switchSection('menu')"><i class="fa-solid fa-chevron-left"></i> Back to Menu</button>
+                             <button class="btn btn-primary" onclick="openEducationModal('Justine Ignacio P.', 'Tomana Elementary School Speed Center', 'Rosales National High School', 'University Of Eastearn Pangasinan')">
+                                 <i class="fa-solid fa-graduation-cap"></i> Background Education
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Member 4: Jaym -->
+                <div id="jaym" class="profile-card-content profile-hero">
+                    <div class="profile-avatar-container">
+                        <div class="avatar-ring double-ring"></div>
+                        <img src="JM.png" alt="Jaym Lumibao T." class="profile-img-zoom">
+                    </div>
+                    <div class="profile-details">
+                        <div class="active-badge glow-badge">Creative UI/UX Strategist</div>
+                        <h1 class="gradient-text">Jaym Lumibao T.</h1>
+                        <p class="profile-bio">Creative thinker crafting seamless user experiences and modern design systems.</p>
+
+                        <div class="personal-data-grid">
+                            <div class="data-card hover-glow"><i class="fa-solid fa-calendar-day pulse-icon"></i><div><span class="data-label">Date of Birth</span><strong class="data-value">November 12, 2007</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-location-dot pulse-icon"></i><div><span class="data-label">Place of Birth</span><strong class="data-value">Rosales</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-hourglass-half pulse-icon"></i><div><span class="data-label">Age</span><strong class="data-value">18 Years Old</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-venus-mars pulse-icon"></i><div><span class="data-label">Sex</span><strong class="data-value">Male</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-church pulse-icon"></i><div><span class="data-label">Religion</span><strong class="data-value">Roman Catholic</strong></div></div>
+                            <div class="data-card hover-glow"><i class="fa-solid fa-heart pulse-icon"></i><div><span class="data-label">Marital Status</span><strong class="data-value">Single</strong></div></div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-secondary" onclick="switchSection('menu')"><i class="fa-solid fa-chevron-left"></i> Back to Menu</button>
+                            <button class="btn btn-primary" onclick="openEducationModal('Jaym Lumibao T.', 'Carmay Elementary School', 'Rosales National High School', 'University Of Eastearn Pangasinan')">
+                                 <i class="fa-solid fa-graduation-cap"></i> Background Education
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== 3. SKILLS SECTION ==================== -->
+        <section id="skills" class="section">
+            <div class="glass-box float-box">
+                <div class="section-badge float-badge"><i class="fa-solid fa-chart-simple spin-icon"></i> Competencies</div>
+                <h2 class="gradient-text">Team Technical Proficiency</h2>
+                <p class="section-subtitle">Our core technical skill sets across client-side development, database logic, and UI design.</p>
+
+                <div class="skills-grid">
+                    <div class="skill-category hover-glow">
+                        <h3><i class="fa-solid fa-desktop pulse-icon"></i> Skills </h3>
+                        
+                        <div class="skill-item">
+                            <ul>
+                            <div class="skill-info"><span><li>Webdeveloper</li></span></div>
+                            </ul>
+                        </div>
+
+                        <div class="skill-item">
+                            <ul>
+                            <div class="skill-info"><span><li>Critical Thinking</li></span></div>
+                            </ul>
+                        </div>
+
+                        <div class="skill-item">
+                            <ul>
+                            <div class="skill-info"><span><li>Problem Solving</li></span></div>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="skill-category hover-glow">
+                        <h3><i class="fa-solid fa-cubes pulse-icon"></i> Background Education</h3>
+                        
+                        <div class="skill-item">
+                            <div class="skill-info"><span>Responsive & Mobile Design</span><span>92%</span></div>
+                            <div class="progress-bar"><div class="progress animated-bar" style="--w: 92%;"></div></div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-info"><span>Database Logic & Back-End</span><span>78%</span></div>
+                            <div class="progress-bar"><div class="progress animated-bar" style="--w: 78%;"></div></div>
+                        </div>
+
+                        <div class="skill-item">
+                            <div class="skill-info"><span>Git / Version Control</span><span>85%</span></div>
+                            <div class="progress-bar"><div class="progress animated-bar" style="--w: 85%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tag-cloud">
+                    <span class="tag pulse-tag"><i class="fa-brands fa-html5"></i> HTML5</span>
+                    <span class="tag pulse-tag"><i class="fa-brands fa-css3-alt"></i> CSS3</span>
+                    <span class="tag pulse-tag"><i class="fa-brands fa-js"></i> JavaScript</span>
+                    <span class="tag pulse-tag"><i class="fa-solid fa-mobile-screen"></i> Responsive UI</span>
+                    <span class="tag pulse-tag"><i class="fa-solid fa-database"></i> SQL Logic</span>
+                    <span class="tag pulse-tag"><i class="fa-brands fa-git-alt"></i> Git</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 4. MORE SECTION ==================== -->
+        <section id="more" class="section">
+            <div class="glass-box float-box">
+                <div class="section-badge float-badge"><i class="fa-solid fa-sparkles spin-icon"></i> Additional Info</div>
+                <h2 class="gradient-text">Projects & Timeline</h2>
+                <p class="section-subtitle">Our journey, group collaboration goals, and upcoming web projects.</p>
+
+                <div class="project-grid">
+                    <div class="project-card tilt-card">
+                        <div class="project-icon"><i class="fa-solid fa-address-card bounce-icon"></i></div>
+                        <h3>Interactive Group Portfolio</h3>
+                        <p>A web portfolio featuring smooth CSS section switching, tab navigation, dynamic member loading, and responsive glassmorphism design.</p>
+                    </div>
+
+                    <div class="project-card tilt-card">
+                        <div class="project-icon"><i class="fa-solid fa-layer-group bounce-icon"></i></div>
+                        <h3>Component Design System</h3>
+                        <p>Custom CSS UI library with smooth CSS animations, neon accent gradients, responsive flex layout, and glow effects.</p>
+                    </div>
+
+                    <div class="project-card tilt-card">
+                        <div class="project-icon"><i class="fa-solid fa-gauge-high bounce-icon"></i></div>
+                        <h3>Fast & Optimized Code</h3>
+                        <p>W3C-valid HTML structure, clean CSS selectors, and optimized cross-browser performance.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-wrapper">
+                    <h3><i class="fa-solid fa-timeline pulse-icon"></i> Team Timeline</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot pulse-dot"></div>
+                            <div class="timeline-content hover-glow">
+                                <span class="date">2026</span>
+                                <h4>Group Portfolio Launch</h4>
+                                <p>Successfully deployed team portfolio web app with responsive layouts and glass-effect aesthetic.</p>
+                            </div>
+                        </div>
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot pulse-dot"></div>
+                            <div class="timeline-content hover-glow">
+                                <span class="date">2025</span>
+                                <h4>Advanced Web Development</h4>
+                                <p>Mastered modern CSS layout systems (Grid & Flexbox), responsive design, and animations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== ENHANCED BACKGROUND EDUCATION ROOM / MODAL ==================== -->
+    <div id="education-modal" class="edu-modal-overlay" onclick="closeEducationModal(event)">
+        <div class="edu-modal-content">
+            <button class="edu-close-btn" onclick="closeEducationModalDirect()"><i class="fa-solid fa-xmark"></i></button>
+            <div class="section-badge float-badge" style="display:inline-block; padding: 4px 14px; background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; border-radius: 50px; font-size: 0.8rem; margin-bottom: 0.8rem; color: #38bdf8;">
+                <i class="fa-solid fa-graduation-cap spin-icon"></i> Educational Room
+            </div>
+            <h2 id="modal-member-name" class="gradient-text" style="font-size: 1.6rem; font-weight: 800; margin-bottom: 1rem;">Member Name</h2>
+            
+            <div class="edu-details-box">
+                <div class="edu-card-item">
+                    <div class="edu-card-level"><i class="fa-solid fa-school pulse-icon"></i> Elementary</div>
+                    <div id="modal-elem" class="edu-card-school">School Name</div>
+                </div>
+                <div class="edu-card-item">
+                    <div class="edu-card-level"><i class="fa-solid fa-building-columns pulse-icon"></i> High School</div>
+                    <div id="modal-hs" class="edu-card-school">School Name</div>
+                </div>
+                <div class="edu-card-item">
+                    <div class="edu-card-level"><i class="fa-solid fa-university pulse-icon"></i> College</div>
+                    <div id="modal-college" class="edu-card-school">School Name</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.8rem; text-align: right;">
+                <button class="btn-modal-close" onclick="closeEducationModalDirect()"><i class="fa-solid fa-door-closed"></i> Close Room</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2026-2027 <span class="shimmer-text">CREWPALS</span>. Created by Jennilyn, Jake, Justine, and Jaym. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts for Navigation & Ocean Particle Canvas Animation -->
+    <script>
+        function switchSection(sectionId) {
+            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active-section'));
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.add('active-section');
+
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const activeNav = document.querySelector(`.nav-item[data-target="${sectionId}"]`);
+            if (activeNav) activeNav.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function switchMember(memberId) {
+            switchSection('resume');
+            document.querySelectorAll('.profile-card-content').forEach(card => card.classList.remove('active-profile'));
+            const memberProfile = document.getElementById(memberId);
+            if(memberProfile) memberProfile.classList.add('active-profile');
+
+            const tabNames = ['jennilyn', 'jake', 'justine', 'jaym'];
+            const tabButtons = document.querySelectorAll('.member-tabs .tab-btn');
+            tabButtons.forEach((btn, idx) => {
+                if (tabNames[idx] === memberId) {
+                    btn.classList.add('active-tab');
+                } else {
+                    btn.classList.remove('active-tab');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* Enhanced Modal Room Functions */
+        function openEducationModal(name, elem, hs, college) {
+            document.getElementById('modal-member-name').innerText = name + "'s Background Education";
+            document.getElementById('modal-elem').innerText = elem;
+            document.getElementById('modal-hs').innerText = hs;
+            document.getElementById('modal-college').innerText = college;
+            document.getElementById('education-modal').style.display = 'flex';
+        }
+
+        function closeEducationModalDirect() {
+            document.getElementById('education-modal').style.display = 'none';
+        }
+
+        function closeEducationModal(event) {
+            if (event.target.id === 'education-modal') {
+                closeEducationModalDirect();
+            }
+        }
+
+        /* Enhanced Ocean Bubbles & Glowing Sea Dust Canvas Animation */
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + Math.random() * 20;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = Math.random() * 0.6 - 0.3;
+                this.speedY = Math.random() * -1.2 - 0.3; // Pataas ang galaw (parang ocean bubbles)
+                this.opacity = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.fil lStyle = `rgba(56, 189, 248, ${this.opacity})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#0EA5E9';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        for (let i = 0; i < 70; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+    </script>
+</body>
+</html>
